@@ -12,11 +12,12 @@ export interface SvgDefinition {
   interfaceName: string;
   data: string;
   prefix: string;
+  suffix: string;
   filenameWithoutEnding: string;
 }
 
 export const filesProcessor = async (conversionOptions): Promise<SvgDefinition[]> => {
-  const { prefix, delimiter, interfaceName, srcFiles, svgoConfig } = conversionOptions;
+  const { prefix, delimiter, interfaceName, srcFiles, suffix, svgoConfig } = conversionOptions;
   const filePaths = await getFilePathsFromRegex(srcFiles);
 
   // Using Promise.all we are making all files be processed in parallel as they have no dependency on each other
@@ -30,12 +31,13 @@ export const filesProcessor = async (conversionOptions): Promise<SvgDefinition[]
           const rawSvg = await extractSvgContent(filePath);
           Logger.verboseInfo(`optimize svg: ${fileNameWithEnding}`);
           const optimizedSvg = await optimize(rawSvg, { path: filePath, ...svgoConfig });
-          const variableName = generateVariableName(prefix, filenameWithoutEnding);
+          const variableName = generateVariableName(prefix, filenameWithoutEnding, suffix);
 
           const typeName = generateTypeName(filenameWithoutEnding, delimiter);
           svgDefinition = {
             typeName,
             prefix,
+            suffix,
             variableName,
             interfaceName,
             data: optimizedSvg.data,

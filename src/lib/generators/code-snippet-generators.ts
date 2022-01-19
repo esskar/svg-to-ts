@@ -118,9 +118,13 @@ export const generateTypeName = (filenameWithoutEnding, delimiter: Delimiter): s
   return `${snakeCase(filenameWithoutEnding)}`;
 };
 
-export const generateVariableName = (prefix: string, filenameWithoutEnding): string => {
+export const generateVariableName = (prefix: string, filenameWithoutEnding, suffix: string): string => {
   const camelCased = camelCase(filenameWithoutEnding);
-  return prefix ? `${prefix}${capitalize(camelCased)}` : camelCased;
+  let variableName = prefix ? `${prefix}${capitalize(camelCased)}` : camelCased;
+  if (suffix) {
+    variableName += capitalize(suffix);
+  }
+  return variableName;
 };
 
 export const generateTypeHelper = (interfaceName: string): string => `
